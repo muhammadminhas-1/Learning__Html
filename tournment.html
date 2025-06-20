@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    import 'package:flutter/material.dart';
+
+void main() => runApp(FreeFireApp());
+
+class FreeFireApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Free Fire Tournament',
+      theme: ThemeData(primarySwatch: Colors.orange),
+      home: TournamentListPage(),
+    );
+  }
+}
+
+class TournamentListPage extends StatelessWidget {
+  final List<String> tournaments = [
+    'Solo Clash #1',
+    'Squad Showdown #2',
+    'Weekend Cup #3'
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Tournaments')),
+      body: ListView.builder(
+        itemCount: tournaments.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(tournaments[index]),
+            trailing: Icon(Icons.arrow_forward_ios),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TournamentDetailPage(name: tournaments[index]),
+                ),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.group_add),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CreateTeamPage()),
+        ),
+      ),
+    );
+  }
+}
+
+class TournamentDetailPage extends StatefulWidget {
+  final String name;
+  TournamentDetailPage({required this.name});
+
+  @override
+  _TournamentDetailPageState createState() => _TournamentDetailPageState();
+}
+
+class _TournamentDetailPageState extends State<TournamentDetailPage> {
+  List<String> teams = ['Alpha Warriors', 'Noobs Pro', 'SnipersX'];
+  String? winner;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.name)),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: teams.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(teams[index]),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      setState(() => winner = teams[index]);
+                    },
+                    child: Text('Select Winner'),
+                  ),
+                );
+              },
+            ),
+          ),
+          if (winner != null)
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('Winner: $winner', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class CreateTeamPage extends StatefulWidget {
+  @override
+  _CreateTeamPageState createState() => _CreateTeamPageState();
+}
+
+class _CreateTeamPageState extends State<CreateTeamPage> {
+  final TextEditingController _controller = TextEditingController();
+  String? createdTeam;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Create Team')),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(labelText: 'Team Name'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                setState(() => createdTeam = _controller.text);
+              },
+              child: Text('Create'),
+            ),
+            if (createdTeam != null)
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text('Team "$createdTeam" created!', style: TextStyle(fontSize: 18)),
+              )
+          ],
+        ),
+      ),
+    );
+  }
+}
+</body>
+</html>
